@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios'
-// import jwt from 'jsonwebtoken'
 
 const http = axios.create({
   baseURL: 'http://localhost:3000'
@@ -15,10 +14,18 @@ export const store = new Vuex.Store({
     foto: ''
   },
 
-  mutation: {
+  mutations: {
 
     setAllFoto: function (state, payload) {
       state.fotos = payload
+    },
+
+    setVoteLike: function (state, payload) {
+      state.fotos.forEach((foto, index) => {
+        if (foto._id === payload._id) {
+          state.fotos[index].like = payload.like
+        }
+      })
     }
 
   },
@@ -27,6 +34,19 @@ export const store = new Vuex.Store({
     getAllFoto: function ({commit}) {
       http.get('/api/foto/getall').then(({data}) => {
         commit('setAllFoto', data)
+      })
+    },
+
+    voteLike: function ({commit}, fotoid) {
+      var dami = {
+        title: 'dami'
+      }
+      var accesstoken = localStorage.getItem('access_token')
+      http.put('/api/foto/like/' + fotoid, dami, {headers: {access_token: accesstoken}}).then(({data}) => {
+        commit('setVoteLike', data)
+        console.log(data)
+      }).catch(err => {
+        console.log(err.message)
       })
     }
   }
