@@ -10,7 +10,7 @@ class UserController {
         .create({
           name: req.body.name,
           email: req.body.email,
-          password: req.body.password
+          password: req.body.password,
         })
         .then((user) => {
           res.status(201).send(user)
@@ -28,7 +28,11 @@ class UserController {
         })
         .then((user) => {
           if(user) {
+            console.log(user)
+            console.log(user.password)
+            console.log(req.body.password)
             var validpassword = bcrypt.compareSync(req.body.password, user.password)
+            console.log(validpassword)
 
             if(validpassword) {
               var payload = {
@@ -37,7 +41,7 @@ class UserController {
                 email: user.email
               }
               res.status(200).send({
-                access_token: jwt.sign(payload, process.env.jwtsecret)
+                access_token: jwt.sign(payload, "Aku Cinta Padamu")
               })
             }
             else {
