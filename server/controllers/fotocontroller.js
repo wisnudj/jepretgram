@@ -16,7 +16,7 @@ class fotoController {
 
   static read(req, res) {
     Foto.find().populate('by').populate('like').exec((err, hasilfoto) => {
-      res.status(200).send(hasil)
+      res.status(200).send(hasilfoto)
     }).catch((err) => {
       res.status(400).send(err)
     })
@@ -35,7 +35,7 @@ class fotoController {
         })
       }
     })
-  },
+  }
 
   static votelike(req, res) {
     Foto.findOne({_id: req.params.id}).then((hasilfoto) => {
@@ -79,7 +79,30 @@ class fotoController {
           }
         }
       }
-    }).catch()
+    }).catch((err) => {
+      res.status(404).send(err)
+    })
+  }
+
+  static editFoto(req, res) {
+    Foto.findOne({_id: req.params.id}).then((hasilfoto) => {
+      if(!hasilfoto) {
+        res.status(404).send({})
+      } else {
+        Foto.updateOne({_id: req.params.id}, {
+          caption: req.body.caption,
+          urlimg: req.body.urlimg
+        }).then((hasilfoto) => {
+          res.status(200).send(hasilfoto)
+        }).catch((err) => {
+          res.status(400).send(err)
+        })
+      }
+    }).catch((err) => {
+      res.status(400).send(err)
+    })
   }
 
 }
+
+module.exports = fotoController;
